@@ -1,37 +1,47 @@
-palavra_secreta = input('Digite uma palavra para começar o jogo: ').strip().lower()
+import time
+cor_vermelho_terminal = '\033[31m'
+cor_vermelho_final = '\033[m'
 acertos = []
-chances = 3
-while True:
-    if chances == 0:
-        print('\nVocê perdeu....')
-        break
+
+
+def verificacao_inicial(entrada):
+    if entrada in acertos:
+        print(cor_vermelho_terminal, 'Você já digitou essa letra\n', cor_vermelho_final)
+    elif not entrada.isalpha():
+        print(cor_vermelho_terminal, 'Digite somente letras.\n', cor_vermelho_final)
+    elif len(entrada) > 1:
+        print(cor_vermelho_terminal, 'Digite apenas uma letra.\n', cor_vermelho_final)
+    elif entrada == '':
+        print(cor_vermelho_terminal, 'Precisa digitar algo.\n', cor_vermelho_final)
     else:
-        print(f'VOCÊ PODE ERRAR {chances}X')
-        entrada = input('Digite uma letra: ').strip().lower()
-        if not entrada.isalpha():
-            print('\033[31mApenas letras...\033[m')
-            continue
-        elif len(entrada) > 1:
-            print('\033[31mPor favor, Digite apenas UMA letra!\033[m')
-            continue
-        if entrada in acertos:
-            print('Você já digitou esse letra!')
-            continue
+        return entrada
+
+
+def verificacao_2(entrada_2):
+    if entrada_2 in palavra_secreta:
+        acertos.append(entrada_2)
+
+
+def laco():
+    palavra = ''
+    for l in palavra_secreta:
+        if l in acertos:
+            time.sleep(0.2)
+            print(f'{l.upper()}', end='')
+            palavra += l
         else:
-            if entrada in palavra_secreta:
-                acertos.append(entrada)
-                print(f'\033[92mA letra "{entrada.upper()}" tem na palavra.\033[m')
-            else:
-                print(f'A letra {entrada.upper()} não tem...')
-                chances -= 1
-        palavra = ''
-        for letra in palavra_secreta:
-            if letra in acertos:
-                palavra += letra
-                print(f'{letra}', end=' ')
-            else:
-                print('_', end=' ')
-        if palavra_secreta == palavra:
-            print('\nVocê acertou!!!')
+            time.sleep(0.2)
+            print(' _ ', end='')
+    return palavra
+
+
+palavra_secreta = input('Vamos iniciar.... \nDigite a palavra secreta: ').strip().lower()
+while True:
+    letra = verificacao_inicial(input('\nDigite uma letra: '))
+    if letra:
+        verificacao_2(letra)
+        if laco() == palavra_secreta:
+            print('\nVocê venceu!!!\n')
             break
-print('Até logo...')
+    else:
+        continue
